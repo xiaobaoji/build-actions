@@ -2,7 +2,7 @@ bind_host: 0.0.0.0
 bind_port: 3000
 users:
   - name: admin
-    password: $2a$10$VtL7fdIqcIbds3uIZp0uSOVYfGd0ztzwyjgs4fiY2wEJVsrs9fM5q
+    password: $2a$10$oJjnraJbXrZ66TaEA.O/1.dI8kmGEAI/gVFU8QT13CzPOTs2aYeWW
 auth_attempts: 5
 block_auth_min: 15
 http_proxy: ""
