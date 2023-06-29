@@ -15,7 +15,7 @@ config dnsmasq
 	option quietdhcp '1'
 	option rebind_protection '0'
 	list server '127.0.0.1#5335'
-	option port '5336'
+	option port '53'
 	option noresolv '1'
 	option cachesize '0'
 
