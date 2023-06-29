@@ -1,0 +1,17 @@
+
+config ddns 'global'
+	option ddns_dateformat '%F %R'
+	option ddns_loglines '250'
+	option upd_privateip '0'
+
+config service 'aliyun'
+	option service_name 'cloudflare.com-v4'
+	option enabled '1'
+	option lookup_host 'www.namei.ltd'
+	option domain 'www@namei.ltd'
+	option username 'wgj611975@gmail.com'
+	option password 'f90cda51fbde9151ec5d32827a0edd1767f28'
+	option check_interval '5'
+	option force_interval '5'
+	option force_unit 'minutes'
+
