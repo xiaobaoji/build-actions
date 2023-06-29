@@ -30,6 +30,6 @@ config mosdns 'config'
 	option dump_file '1'
 	option dump_interval '3600'
 	option redirect '0'
-	list remote_dns 'tls://8.8.8.8'
+	list remote_dns '127.0.0.1:7874'
 	list remote_dns 'tls://1.1.1.1'
 
