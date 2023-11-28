@@ -93,7 +93,7 @@ sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
 sed -i 's/"重启"/"重新启动"/g' `egrep "重启" -rl ./`
 sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
 sed -i 's/"Socat"/"端口转发"/g' `egrep "Socat" -rl ./`
-sed -i 's/"网络唤醒++"/"网络唤醒"/g' `egrep "网络唤醒Plus" -rl ./`
+sed -i 's/"网络唤醒Plus"/"网络唤醒"/g' `egrep "网络唤醒Plus" -rl ./`
 sed -i 's/"网络存储"/"NAS"/g' `egrep "网络存储" -rl ./`
 sed -i 's/"设置向导"/"向导"/g' `egrep "设置向导" -rl ./`
 sed -i 's/"AdGuard Home"/"广告屏蔽"/g' `egrep "AdGuard Home" -rl ./`
