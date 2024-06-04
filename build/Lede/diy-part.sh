@@ -64,6 +64,16 @@ export Disable_autosamba="0"                 # 去掉源码默认自选的luci-a
 # 手动更换默认主题
 # uci set luci.main.mediaurlbase='/luci-static/neobird' && uci commit luci
 
+#echo "删除内置argon主题,使用原作者最新argon"
+find ${HOME_PATH}/package/feeds/luci -type d -name "luci-theme-argon" | xargs sudo rm -rf
+# lede源码对应主题
+git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
+# 官方源码对应主题
+#git clone -b master https://github.com/jerrykuku/luci-theme-argon
+
+#echo "添加主题 new theme neobird"
+#git clone https://github.com/thinktip/luci-theme-neobird.git
+
 #sed -i 's/1.68.1/1.72.0/g' feeds/packages/lang/rust/Makefile
 #sed -i 's/CCb051df5701d4C588e3d0558f83e73e7ea0a9b165dab3e39dd2db8a6a25d03/ea9d61bab51d76e681156f69f0e0596b59722f04414b01c6e100b4b5be3a1/g' feeds/packages/lang/rust/Makefile
 
