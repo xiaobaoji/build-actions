@@ -72,7 +72,7 @@ git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon
 #git clone -b master https://github.com/jerrykuku/luci-theme-argon
 
 #echo "添加主题 new theme neobird"
-#git clone https://github.com/thinktip/luci-theme-neobird.git
+git clone https://github.com/thinktip/luci-theme-neobird.git
 
 #sed -i 's/1.68.1/1.72.0/g' feeds/packages/lang/rust/Makefile
 #sed -i 's/CCb051df5701d4C588e3d0558f83e73e7ea0a9b165dab3e39dd2db8a6a25d03/ea9d61bab51d76e681156f69f0e0596b59722f04414b01c6e100b4b5be3a1/g' feeds/packages/lang/rust/Makefile
