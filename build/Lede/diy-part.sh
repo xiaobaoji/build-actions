@@ -104,7 +104,7 @@ sed -i 's/"阿里云盘 WebDAV"/"阿里云盘"/g' `egrep "阿里云盘 WebDAV" -
 sed -i 's/"UPnP"/"UPnP设置"/g' `egrep "UPnP" -rl ./`
 sed -i 's/"诊断"/"网络诊断"/g' `egrep "诊断" -rl ./`
 sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
-sed -i 's/"重启"/"重新启动"/g' `egrep "重启" -rl ./`
+#sed -i 's/"重启"/"重新启动"/g' `egrep "重启" -rl ./`
 sed -i 's/"关机"/"关闭电源"/g' `egrep "关机" -rl ./`
 sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
 sed -i 's/"Socat"/"端口转发"/g' `egrep "Socat" -rl ./`
