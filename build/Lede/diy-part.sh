@@ -115,6 +115,7 @@ sed -i 's/"AdGuard Home"/"广告屏蔽"/g' `egrep "AdGuard Home" -rl ./`
 sed -i 's/"路由表"/"用户列表"/g' `egrep "路由表" -rl ./`
 sed -i 's/"挂载点"/"挂载分区"/g' `egrep "挂载点" -rl ./`
 sed -i 's/"FTP 服务器"/"FTP 服务"/g' `egrep "FTP 服务器" -rl ./`
+sed -i 's/"uHttpd"/"端口设置"/g' `egrep "uHttpd" -rl ./`
 
 
 # 整理固件包时候,删除您不想要的固件或者文件,让它不需要上传到Actions空间(根据编译机型变化,自行调整删除名称)
