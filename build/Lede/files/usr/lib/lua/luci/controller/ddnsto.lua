@@ -6,7 +6,7 @@ function index()
                 return
         end
 
-        entry({"admin","services", "ddnsto"}, call("redirect_index"), _("内网穿透"), 20).dependent = true
+        entry({"admin","services", "ddnsto"}, call("redirect_index"), _("DDNSTO"), 20).dependent = true
         entry({"admin","services", "ddnsto", "pages"}, call("ddnsto_index")).leaf = true
         if nixio.fs.access("/usr/lib/lua/luci/view/ddnsto/main_dev.htm") then
             entry({"admin","services", "ddnsto", "dev"}, call("ddnsto_dev")).leaf = true
