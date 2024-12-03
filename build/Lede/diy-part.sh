@@ -98,28 +98,17 @@ export kernel_usage="stable"
 
 
 # 修改插件名字
-sed -i 's/"KMS 服务器"/"KMS 激活"/g' `egrep "KMS 服务器" -rl ./`
-sed -i 's/"Web 管理"/"管理"/g' `egrep "Web 管理" -rl ./`
-sed -i 's/"管理权"/"管理员"/g' `egrep "管理权" -rl ./`
-sed -i 's/"阿里云盘 WebDAV"/"阿里云盘"/g' `egrep "阿里云盘 WebDAV" -rl ./`
-sed -i 's/"UPnP"/"即插即用"/g' `egrep "UPnP" -rl ./`
-sed -i 's/"诊断"/"网络诊断"/g' `egrep "诊断" -rl ./`
-sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
-#sed -i 's/"重启"/"重启项"/g' `egrep "重启" -rl ./`
-#sed -i 's/"关机"/"关闭电源"/g' `egrep "关机" -rl ./`
-sed -i 's/"主机名"/"主机名称"/g' `egrep "主机名" -rl ./`
-sed -i 's/"Socat"/"端口转发"/g' `egrep "Socat" -rl ./`
-sed -i 's/"网络唤醒Plus"/"网络唤醒"/g' `egrep "网络唤醒Plus" -rl ./`
+sed -i 's/"aMule设置"/"电驴下载"/g' `egrep "aMule设置" -rl ./`
 sed -i 's/"网络存储"/"NAS"/g' `egrep "网络存储" -rl ./`
-#sed -i 's/"设置向导"/"向导"/g' `egrep "设置向导" -rl ./`
-sed -i 's/"AdGuard Home"/"广告屏蔽"/g' `egrep "AdGuard Home" -rl ./`
-sed -i 's/"路由表"/"用户列表"/g' `egrep "路由表" -rl ./`
-sed -i 's/"挂载点"/"挂载分区"/g' `egrep "挂载点" -rl ./`
-sed -i 's/"FTP 服务器"/"FTP 服务"/g' `egrep "FTP 服务器" -rl ./`
-#sed -i 's/"TTYD 终端"/"终端"/g' `egrep "TTYD 终端" -rl ./`
-#sed -i 's/"uHTTPd"/"端口管理"/g' `egrep "uHTTPd" -rl ./`
-#sed -i 's/"DDNSTO 远程控制"/"DDNSTO"/g' `egrep "DDNSTO 远程控制" -rl ./`
-#sed -i 's/"IP/MAC Binding"/"IP/MAC"/g' `egrep "IP/MAC Binding" -rl ./`
+sed -i 's/"Turbo ACC 网络加速"/"网络加速"/g' `egrep "Turbo ACC 网络加速" -rl ./`
+sed -i 's/"实时流量监测"/"流量"/g' `egrep "实时流量监测" -rl ./`
+sed -i 's/"KMS 服务器"/"KMS激活"/g' `egrep "KMS 服务器" -rl ./`
+sed -i 's/"TTYD 终端"/"TTYD"/g' `egrep "TTYD 终端" -rl ./`
+sed -i 's/"USB 打印服务器"/"打印服务"/g' `egrep "USB 打印服务器" -rl ./`
+sed -i 's/"Web 管理"/"Web管理"/g' `egrep "Web 管理" -rl ./`
+sed -i 's/"管理权"/"改密码"/g' `egrep "管理权" -rl ./`
+sed -i 's/"带宽监控"/"监控"/g' `egrep "带宽监控" -rl ./`
+sed -i 's/"设置向导"/"向导"/g' `egrep "设置向导" -rl ./`
 
 
 
