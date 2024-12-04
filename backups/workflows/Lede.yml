@@ -3,7 +3,7 @@
 #
 #
 
-name: Lede-源码
+name: Lede
 on:
   workflow_dispatch:
     inputs:
