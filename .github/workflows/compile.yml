@@ -21,6 +21,8 @@ env:
   PUSH_PLUS_TOKEN: ${{ secrets.PUSH_PLUS_TOKEN }}
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+  WX_TOKEN: ${{ secrets.WX_TOKEN }}
+  CURL: ${{ secrets.CURL }}
   TZ: Asia/Shanghai
 
 jobs:
@@ -37,13 +39,14 @@ jobs:
         target: [Lede]
 
     steps:    
+        
     - name: 准备结束
       uses: actions/checkout@v4
 
     - name: 检测文件和对比上游版本
       run: |
         cd ${GITHUB_WORKSPACE}
-        bash <(curl -fsSL https://raw.githubusercontent.com/xiaobaoji/common/main/custom/first.sh)
+        bash <(curl -fsSL https://raw.githubusercontent.com/shidahuilang/common/main/custom/first.sh)
         if [[ -n "${{ github.event.workflow }}" ]] || [[ -n "${{ github.event.schedule }}" ]]; then
           source ${GITHUB_WORKSPACE}/build/${FOLDER_NAME}/settings.ini
         else
@@ -60,19 +63,21 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}
         source build/${FOLDER_NAME}/common.sh && CPU_Priority
-
-    - name: 释放Ubuntu磁盘空间
-      uses: endersonmenezes/free-disk-space@v2
+        
+    - name: 清理空间
+      uses: jlumbroso/free-disk-space@main
       with:
-        remove_android: true
-        remove_dotnet: true
-        remove_haskell: true
-        remove_tool_cache: true
-        remove_swap: true
-        remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
-        remove_packages_one_command: true
-        remove_folders: "/usr/share/swift /usr/share/miniconda /usr/share/az* /usr/share/glade* /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell"
-        testing: false
+        # 这可能会移除实际需要的工具
+        # 如果设置为“true”，但释放约6 GB
+        tool-cache: true
+        
+        # 所有这些都默认为true
+        # "false" 可以随时关闭
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        swap-storage: true     
         
     - name: 部署编译环境
       env:
@@ -83,6 +88,11 @@ jobs:
         sudo mkdir -p /${{ env.DIY_WORK }}
         sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}
 
+    #- name: 升级rustc到1.70.0
+      #run: |
+                #curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.70.0
+                #source $HOME/.cargo/env
+                
     - name: 下载"${{matrix.target}}"源码
       working-directory: /${{ env.DIY_WORK }}
       run: |
@@ -136,14 +146,14 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-        make download -j8
+        make download -j16
     
     - name: 开始编译固件
       id: compile
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 V=s
+        make -j$(($(nproc) + 1)) || make -j1 V=s
         echo "date=$(date "+%Y%m%d%H%M%S")" >> ${GITHUB_ENV}
         source ${BUILD_PATH}/common.sh && firmware_jiance
         
@@ -175,19 +185,25 @@ jobs:
     
     - name: 发布固件
       if: steps.compile.outcome == 'success' && env.UPLOAD_RELEASE == 'true' && env.ING_FIRMWAR == 'true' && env.REPO_TOKEN
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@main
       with:
         name: ${{ env.SOURCE }}-${{ env.PROMPT_TING }}
         tag: a${{ env.date }}
         token: ${{ secrets.REPO_TOKEN }}
         allowUpdates: true
-        body: ${{ env.Tongzhi_Date }}
         artifacts: "${{ env.FIRMWARE_PATH }}/*"
-        
+        body: |
+          🎁 编译仓库：${{ env.WAREHOUSE_MAN }}  
+          🌴 源码分支：${{ env.REPO_BRANCH }}
+          🔥 编译版本：${{ env.Openwrt_Version }}
+          🛸 LUCI版本：${{ env.LUCI_EDITION }}
+          ✨ 内核版本：${{ env.LINUX_KERNEL }}
+          ⏰ 编译时间：${{ env.Compte_Date }}
+          
     - name: 发送[在线更新固件]至云端1
       id: autoup
       if: steps.compile.outcome == 'success' && env.UPDATE_FIRMWARE_ONLINE == 'true' && env.REPO_TOKEN
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@main
       with:
         name: AutoUpdate
         tag: ${{ env.Update_tag }}
@@ -208,7 +224,7 @@ jobs:
         
     - name: 发送[在线更新固件]至云端3
       if: steps.autoup.outcome == 'success' && env.UPDATE_FIRMWARE_ONLINE == 'true' && env.REPO_TOKEN
-      uses: ncipollo/release-action@v1
+      uses: ncipollo/release-action@main
       with:
         name: AutoUpdate-${{ env.TARGET_BOARD }}
         tag: ${{ env.Update_tag }}
@@ -218,15 +234,66 @@ jobs:
         body: ${{ env.Tongzhi_Date }}
 
     - name: Telegram或pushplus信息通知
-      if: env.PUSH_PLUS_TOKEN && env.INFORMATION_NOTICE == 'PUSH' || env.TELEGRAM_BOT_TOKEN && env.INFORMATION_NOTICE == 'TG'
+      if: env.PUSH_PLUS_TOKEN && env.INFORMATION_NOTICE == 'PUSH' || env.TELEGRAM_BOT_TOKEN && env.INFORMATION_NOTICE == 'TG' || env.WX_TOKEN && env.INFORMATION_NOTICE == 'WX'
       run: |
-        if [[ "${{ env.INFORMATION_NOTICE }}" == "TG" ]]; then
-          if [[ "${{steps.compile.outcome}}" == 'success' ]]; then
-            curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" --data "text=我亲爱的✨主人✨：您使用【${{matrix.target}}】文件夹编译【${REPO_BRANCH}分支的${{env.TARGET_PROFILE}}】固件顺利编译完成了✌️💯💐(${{env.WAREHOUSE_MAN}}仓库的#${{env.RUN_NUMBER}}号)！($(date +%Y年%m月%d号%H时%M分))" "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage"
-          fi
+       if [[ "${{ env.INFORMATION_NOTICE }}" == "TG" ]]; then
+       if [[ "${{steps.compile.outcome}}" == 'success' ]]; then
+        curl -k --data chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+             --data text="🎉 主人您的${{ env.TARGET_PROFILE }}固件成功编译完成了！
+             
+         🎁 编译仓库：${{ env.WAREHOUSE_MAN }}  
+         🌴 源码分支：${{ env.REPO_BRANCH }}
+         🔥 编译版本：${{ env.Openwrt_Version }}
+         🛸 LUCI版本：${{ env.LUCI_EDITION }}
+         ✨ 内核版本：${{ env.LINUX_KERNEL }}
+         ⏰ 编译时间：${{ env.Compte_Date }}
+         ⏰ 累计编译：${{ env.RUN_NUMBER }}
+         🎉 发布地址：${{ env.Github_Release }}
+         🏅 固件已经编译完成 🎈！！！" \
+                "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" >/dev/null 2>&1 && echo "Telegram通知成功"
+       fi
+       fi
+
+       if [[ "${{ env.INFORMATION_NOTICE }}" == "PUSH" ]]; then
+       if [[ "${{steps.compile.outcome}}" == 'success' ]]; then
+        curl -k --data token="${{ secrets.PUSH_PLUS_TOKEN }}" \
+             --data title="[${{ env.SOURCE }}-${{ env.TARGET_PROFILE }}]编译成功" \
+             --data content="🎉 主人您的${{ env.FIRMWARE_MESSAGE }}固件成功编译完成了！
+
+         🎁 编译仓库：${{ env.WAREHOUSE_MAN }}  
+         🌴 源码分支：${{ env.REPO_BRANCH }}
+         🔥 编译版本：${{ env.Openwrt_Version }}
+         🛸 LUCI版本：${{ env.LUCI_EDITION }}
+         ✨ 内核版本：${{ env.LINUX_KERNEL }}
+         ⏰ 编译时间：${{ env.Compte_Date }}
+         ⏰ 累计编译：${{ env.RUN_NUMBER }}
+         🎉 发布地址：${{ env.Github_Release }}
+         🏅 固件已经编译完成 🎈！！！" \
+             "http://www.pushplus.plus/send" >/dev/null 2>&1 && echo "PUSH通知成功"
         fi
-        if [[ "${{ env.INFORMATION_NOTICE }}" == "PUSH" ]]; then
-          if [[ "${{steps.compile.outcome}}" == 'success' ]]; then
-            curl -k --data token="${{ secrets.PUSH_PLUS_TOKEN }}" --data title="[${{ env.SOURCE }}-${{ env.TARGET_PROFILE }}]编译成功" --data "content=我亲爱的✨主人✨：您使用【${{matrix.target}}】文件夹编译【${REPO_BRANCH}分支的${{env.TARGET_PROFILE}}】固件顺利编译完成了✌️💯💐(${{env.WAREHOUSE_MAN}}仓库的#${{env.RUN_NUMBER}}号)！($(date +%Y年%m月%d号%H时%M分))" "http://www.pushplus.plus/send"
-          fi
         fi
+
+       if [[ "${{ env.INFORMATION_NOTICE }}" == "WX" ]]; then
+       if [[ "${{steps.gitpush.outcome}}" == 'success' ]] && [[ "${{steps.compile.outcome}}" == 'success' ]]; then
+        curl -k --data token="${{ secrets.WX_TOKEN }}" \
+             --data title="编译成功" \
+             --data message="🎉 主人您的${{ env.FIRMWARE_MESSAGE }}固件成功编译完成了！
+
+         🎁 编译仓库：${{ env.WAREHOUSE_MAN }}  
+         🌴 源码分支：${{ env.REPO_BRANCH }}
+         🔥 编译版本：${{ env.Openwrt_Version }}
+         🛸 LUCI版本：${{ env.LUCI_EDITION }}
+         ✨ 内核版本：${{ env.LINUX_KERNEL }}
+         ⏰ 编译时间：${{ env.Compte_Date }}
+         ⏰ 累计编译：${{ env.RUN_NUMBER }}
+         🎉 发布地址：${{ env.Github_Release }}
+         🏅 固件已经编译完成 🎈！！！" \
+             "http://${{ secrets.CURL }}/push?token=${{ secrets.WX_TOKEN }}&" >/dev/null 2>&1 && echo "WX通知成功"
+       else
+        curl -k --data token="${{ secrets.WX_TOKEN }}" \
+             --data title="触发启动失败" \
+             --data message="💥 主人❌ ：上游扩展错误或者脚本错误, 触发启动【${{ env.FOLDER_NAME }}】失败, 请点击触发脚本步骤查看详情!(${{env.Tongzhi_Date}})" \
+             "http://${{ secrets.CURL }}/push?token=${{ secrets.WX_TOKEN }}&" >/dev/null 2>&1 && echo "WX通知失败"
+        exit 1
+       fi
+       fi
